@@ -1,0 +1,40 @@
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# Data and model files (too large for Git — use DVC or Git LFS for real data)
+data/raw/
+data/processed/
+models/*.pkl
+
+# Reports (generated artifacts)
+reports/*.html
+reports/*.json
+reports/*.csv
+reports/*.xml
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

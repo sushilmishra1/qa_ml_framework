@@ -1,0 +1,141 @@
+name: QA ML Framework CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── Job 1: Lint + Unit Tests ─────────────────────────────────────────────
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests with coverage
+        run: |
+          pytest tests/ -v \
+            --junitxml=reports/test_results_${{ matrix.python-version }}.xml \
+            --cov=src \
+            --cov-report=xml:reports/coverage.xml \
+            --cov-report=term-missing \
+            --cov-fail-under=70
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.python-version }}
+          path: reports/test_results_${{ matrix.python-version }}.xml
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-${{ matrix.python-version }}
+          path: reports/coverage.xml
+
+  # ── Job 2: ML Risk Gate (on PRs to main) ─────────────────────────────────
+  ml-gate:
+    name: ML Risk Gate
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Generate sample data (if no real data present)
+        run: |
+          if [ ! -d "data/raw/junit" ]; then
+            echo "No JUnit data found — generating synthetic data for demo"
+            python scripts/generate_sample_data.py
+          fi
+
+      - name: Run full ML pipeline
+        run: python scripts/run_pipeline.py
+        env:
+          PYTHONPATH: .
+
+      - name: Run CI gate
+        run: |
+          python -m src.ci_gate.gate reports/predictions.csv \
+            --config config.yaml \
+            --output reports/gate_result.json
+        env:
+          PYTHONPATH: .
+
+      - name: Upload ML report as artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ml-gate-report
+          path: |
+            reports/prediction_report.html
+            reports/gate_result.json
+            reports/predictions.csv
+
+      - name: Comment gate result on PR
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let gateResult = {};
+            try {
+              gateResult = JSON.parse(fs.readFileSync('reports/gate_result.json', 'utf8'));
+            } catch (e) {
+              console.log('Could not read gate result:', e.message);
+              return;
+            }
+            const icon = gateResult.gate_passed ? '✅' : '❌';
+            const status = gateResult.gate_passed ? 'PASSED' : 'FAILED';
+            const body = `## ${icon} QA ML Gate — ${status}
+            
+| Metric | Value |
+|--------|-------|
+| Mean risk score (top-200) | \`${gateResult.mean_top_risk}\` |
+| Threshold | \`${gateResult.risk_threshold}\` |
+| High-risk tests | \`${gateResult.high_risk_count}\` |
+| Total tests evaluated | \`${gateResult.total_tests}\` |
+
+${gateResult.gate_passed 
+  ? '✅ All tests are within acceptable risk threshold.' 
+  : '❌ Some tests exceed the risk threshold. Review the uploaded report artifact.'}
+`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body
+            });
