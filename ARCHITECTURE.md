@@ -133,11 +133,18 @@ flowchart LR
 
 ---
 
-## 5. Why this architecture (interview framing)
+## 5. Design rationale
 
 - **Layered, not monolithic**: ingestion / features / model / decision / reporting are separate modules — each independently testable (`tests/test_ingestion.py`, `test_features.py`, `test_models.py`, `test_perf_anomaly.py`) and swappable (e.g. Locust parser could be replaced by JMeter without touching the model layer).
-- **Time-split CV, not k-fold**: test results are time-ordered; k-fold would leak future data into training. This is the kind of detail that signals real ML-in-production experience, not just `sklearn.fit()`.
-- **Random Forest over XGBoost**: `feature_importances_` gives an interpretable answer to "why was this test flagged," which matters when a QA lead pushes back on a CI-blocking decision.
-- **Unsupervised where labels don't exist**: flaky-test detection and perf anomalies have no ground-truth labels, so Isolation Forest is used instead of forcing a supervised approach.
+- **Time-split CV, not k-fold**: test results are time-ordered; k-fold would leak future data into training and produce offline metrics the model can't actually hit once it's scoring runs it hasn't seen yet.
+- **Random Forest over XGBoost**: `feature_importances_` gives an interpretable answer to "why was this test flagged," which matters when the gate blocks a PR and someone needs a reason, not just a score.
+- **Unsupervised where labels don't exist**: flaky-test detection and perf anomalies have no ground-truth labels, so Isolation Forest is used instead of forcing a supervised approach onto a problem that doesn't have one.
 - **The gate is a pure function of config**: `risk_threshold` and `top_n_tests` live in `config.yaml`, not hardcoded — same codebase tunable per team/repo without a code change.
-- **CI is the actual product surface**: the ML output isn't a dashboard nobody looks at — it's wired directly into the PR merge decision and posts a comment, so the model's value is enforced at the point of engineering workflow, not just observed.
+- **CI is the actual product surface**: the ML output isn't a dashboard nobody looks at — it's wired directly into the PR merge decision and posts a comment, so the model's output has to earn its keep at the point where engineers actually work.
+
+## 6. Known limitations (not yet solved)
+
+- **Validated on synthetic data only.** The failure predictor and anomaly detector have never been run against a real project's accumulated CI/perf history — only against `scripts/generate_sample_data.py` output, which has cleaner, hand-injected patterns than real flakiness.
+- **No drift monitoring.** Nothing tracks whether a deployed model's accuracy degrades as the test suite and codebase evolve; there's no retraining trigger.
+- **Gate averages top-N risk.** `gate.py` compares `mean(top_10_risk_scores)` to the threshold, so one severely at-risk test can be diluted by nine lower-risk ones and still pass. Worth pairing with a hard per-test ceiling.
+- **Rolling z-score features self-normalize.** A performance regression that persists longer than `baseline_window` samples gradually gets absorbed into its own rolling baseline and the anomaly score decays back toward zero — a known weakness of any purely rolling reference window.

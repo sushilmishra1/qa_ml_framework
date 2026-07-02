@@ -139,14 +139,22 @@ flowchart LR
 <tr><td>Delivery</td><td><code>.github/workflows/ci.yml</code></td><td>Test matrix + risk gate + PR feedback</td><td>GitHub Actions</td></tr>
 </table>
 
-<h2>5. Why this architecture (interview framing)</h2>
+<h2>5. Design rationale</h2>
 <ul>
 <li><b>Layered, not monolithic</b>: ingestion / features / model / decision / reporting are separate modules — each independently testable and swappable (e.g. Locust parser could be replaced by JMeter without touching the model layer).</li>
-<li><b>Time-split CV, not k-fold</b>: test results are time-ordered; k-fold would leak future data into training.</li>
-<li><b>Random Forest over XGBoost</b>: <code>feature_importances_</code> gives an interpretable answer to "why was this test flagged."</li>
+<li><b>Time-split CV, not k-fold</b>: test results are time-ordered; k-fold would leak future data into training and produce offline metrics the model can't actually hit in production.</li>
+<li><b>Random Forest over XGBoost</b>: <code>feature_importances_</code> gives an interpretable answer to "why was this test flagged" when the gate blocks a PR.</li>
 <li><b>Unsupervised where labels don't exist</b>: flaky-test detection and perf anomalies have no ground-truth labels, so Isolation Forest is used instead of forcing a supervised approach.</li>
 <li><b>The gate is a pure function of config</b>: <code>risk_threshold</code> and <code>top_n_tests</code> live in <code>config.yaml</code>, tunable per team/repo without a code change.</li>
 <li><b>CI is the actual product surface</b>: the ML output is wired directly into the PR merge decision, not just a dashboard nobody looks at.</li>
+</ul>
+
+<h2>6. Known limitations (not yet solved)</h2>
+<ul>
+<li><b>Validated on synthetic data only.</b> Never run against a real project's accumulated CI/perf history — only against the synthetic generator's cleaner, hand-injected patterns.</li>
+<li><b>No drift monitoring.</b> Nothing tracks whether a deployed model's accuracy degrades as the suite and codebase evolve.</li>
+<li><b>Gate averages top-N risk.</b> One severely at-risk test can be diluted by nine lower-risk ones and still pass the mean-based threshold.</li>
+<li><b>Rolling z-score features self-normalize.</b> A regression that outlasts <code>baseline_window</code> samples gets absorbed into its own rolling baseline and the anomaly score decays back toward zero.</li>
 </ul>
 
 <script>mermaid.initialize({ startOnLoad: true, theme: 'default' });</script>

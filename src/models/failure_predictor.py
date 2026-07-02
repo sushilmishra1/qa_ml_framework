@@ -7,7 +7,7 @@ Logistic Regression (interpretable baseline).
 Key design decisions:
     - Time-based train/test split (NOT random k-fold — avoids temporal leakage)
     - class_weight='balanced' to handle the ~5% failure rate imbalance
-    - Feature importance output for interview/stakeholder explainability
+    - Feature importance output so a blocked PR comes with a reason, not just a score
     - Model persistence via joblib for CI gate reuse
 """
 

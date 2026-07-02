@@ -1,7 +1,8 @@
 """
 generate_sample_data.py
 -----------------------
-Generates realistic synthetic test data for development and interview demos.
+Generates realistic synthetic test data for local development and CI dry-runs,
+so the pipeline can be exercised without a real CI/test-history backfill.
 
 Produces:
   - data/raw/junit/       : 60 JUnit XML files (one per simulated CI run)

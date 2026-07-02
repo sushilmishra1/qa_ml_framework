@@ -1,7 +1,7 @@
 # qa-ml-framework
 
 > **ML-powered QA intelligence** — test failure prediction, risk-based prioritisation, and performance anomaly detection.  
-> Pure Python · No AI/LLM dependencies · Interview-ready · GitHub Actions CI gate included.
+> Pure Python · No AI/LLM dependencies · No cloud services required · GitHub Actions CI gate included.
 
 ---
 
@@ -47,7 +47,7 @@ qa-ml-framework/
 │   ├── test_models.py
 │   └── test_perf_anomaly.py
 ├── notebooks/
-│   └── exploration.ipynb       # Demo notebook for interviews
+│   └── exploration.ipynb       # Notebook for exploring predictions and feature importances
 ├── reports/                    # Generated HTML/JSON reports
 ├── scripts/
 │   ├── generate_sample_data.py # Synthetic data generator (no real tool needed)
@@ -150,13 +150,13 @@ else:
 
 ---
 
-## Interview talking points
+## Design decisions
 
-- **Why Random Forest over XGBoost?** Interpretability — `feature_importances_` lets you explain to a QA lead *why* a test was flagged.
-- **Why time-split CV?** Test runs are time-ordered. Random k-fold leaks future data into training.
-- **Why Isolation Forest for flakiness?** No labelled dataset required — unsupervised detection of anomalous pass/fail patterns.
-- **Why not accuracy?** Class imbalance — 95% pass rate means a trivial classifier gets 95% accuracy. We optimise F1 and precision@k.
-- **Performance anomaly without LLM** — pure statistical approach: Z-score for simple thresholds, Isolation Forest for multivariate anomalies across response_time + throughput + error_rate simultaneously.
+- **Random Forest over XGBoost**: `feature_importances_` gives a QA lead a direct answer for *why* a test was flagged, which matters when the model is going to block a PR — an unexplainable rejection erodes trust in the gate fast.
+- **Time-split CV, not k-fold**: test runs are time-ordered. Random k-fold would let future runs leak into training and inflate offline metrics beyond what the model can actually do in production.
+- **Isolation Forest for flakiness**: there's no labelled "this test is flaky" dataset to supervise against, so detection has to be unsupervised.
+- **F1/precision@k over accuracy**: the pass rate is ~95%, so a trivial "always predict pass" classifier would already score 95% accuracy while catching zero real failures. Accuracy would hide exactly the failure mode this tool exists to catch.
+- **Statistical perf anomaly detection, no LLM**: Z-score for simple single-metric thresholds, Isolation Forest for multivariate anomalies across response_time + throughput + error_rate together — cheaper, faster, and auditable compared to a model-based approach for a problem that doesn't need one.
 
 ---
 

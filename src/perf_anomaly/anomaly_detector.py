@@ -11,11 +11,11 @@ Isolation Forest is ideal for performance testing because:
     - Scales well to large time-series (O(n log n))
     - sklearn IsolationForest is the industry standard implementation
 
-Interview explanation:
-    "Anomalies are rare and different — they are easier to ISOLATE than
+How it works:
+    Anomalies are rare and different — they are easier to ISOLATE than
     normal points. IsolationForest builds random trees and measures how
     few splits it takes to isolate a point. Anomalies need fewer splits
-    because they sit in sparse regions of feature space."
+    because they sit in sparse regions of feature space.
 """
 
 import os
