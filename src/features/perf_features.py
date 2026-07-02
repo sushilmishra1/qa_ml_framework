@@ -52,13 +52,13 @@ def build_perf_feature_matrix(
             features = {
                 "timestamp": row["timestamp"],
                 "endpoint": endpoint,
-                # ── Raw values ────────────────────────────────────────
+                # --- Raw values ---
                 "raw_median_ms": row.get("median_ms", 0.0),
                 "raw_p95_ms": row.get("p95_ms", 0.0),
                 "raw_p99_ms": row.get("p99_ms", 0.0),
                 "raw_error_rate": row.get("error_rate", 0.0),
                 "raw_rps": row.get("rps", 0.0),
-                # ── Z-scores vs rolling baseline ──────────────────────
+                # --- Z-scores vs rolling baseline ---
                 "z_median_ms": _zscore(row.get("median_ms", 0.0),
                                        baseline["median_ms"]),
                 "z_p95_ms": _zscore(row.get("p95_ms", 0.0),
@@ -66,7 +66,7 @@ def build_perf_feature_matrix(
                 "z_error_rate": _zscore(row.get("error_rate", 0.0),
                                         baseline["error_rate"]),
                 "z_rps": _zscore(row.get("rps", 0.0), baseline["rps"]),
-                # ── Ratio features ────────────────────────────────────
+                # --- Ratio features ---
                 "p95_to_median_ratio": _safe_ratio(row.get("p95_ms", 0.0),
                                                    row.get("median_ms", 1.0)),
                 "throughput_drop_pct": _throughput_drop(

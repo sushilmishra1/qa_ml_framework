@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>QA ML Framework — Files &amp; Readiness</title>
+<title>QA ML Framework - Files &amp; Readiness</title>
 <style>
   body { font-family: -apple-system, Segoe UI, Arial, sans-serif; max-width: 1100px; margin: 40px auto; padding: 0 20px; line-height: 1.5; color: #1a1a1a; }
   h1 { border-bottom: 2px solid #eee; padding-bottom: 8px; }
@@ -28,50 +28,50 @@
 </head>
 <body>
 
-<h1>QA ML Framework — Files &amp; Readiness</h1>
+<h1>QA ML Framework - Files &amp; Readiness</h1>
 <p class="sub">Snapshot as of the last verified pipeline run + full test suite pass.</p>
 
 <h2>Readiness scorecard</h2>
 <div class="scorecard">
   <div class="card"><div class="num">61 / 61</div><div class="label">Unit tests passing (pytest)</div></div>
   <div class="card"><div class="num">6 / 6</div><div class="label">Pipeline stages ran end-to-end</div></div>
-  <div class="card"><div class="num">✅ PASSED</div><div class="label">CI gate on last run (mean risk 0.282 &lt; 0.35)</div></div>
+  <div class="card"><div class="num">PASSED</div><div class="label">CI gate on last run (mean risk 0.282 &lt; 0.35)</div></div>
   <div class="card"><div class="num">32</div><div class="label">Performance anomalies detected &amp; reported</div></div>
 </div>
 
 <h2>File tree</h2>
 <div class="tree">
 qa-ml-framework/
-├── <span class="dir">data/</span>                          <span class="comment"># gitignored — generated, not committed</span>
+├── <span class="dir">data/</span>                          <span class="comment"># gitignored - generated, not committed</span>
 │   ├── <span class="dir">raw/junit/</span>                 <span class="comment"># 60 synthetic JUnit XML runs</span>
 │   ├── <span class="dir">raw/locust/</span>                <span class="comment"># Locust stats_history.csv w/ injected spikes</span>
 │   └── <span class="dir">processed/</span>features.parquet <span class="comment"># engineered feature matrix</span>
 ├── <span class="dir">src/</span>
 │   ├── <span class="dir">ingestion/</span>
-│   │   ├── <span class="file">junit_parser.py</span>            <span class="comment">✅ tested (11 tests)</span>
-│   │   └── <span class="file">locust_parser.py</span>           <span class="comment">✅ tested (7 tests)</span>
+│   │   ├── <span class="file">junit_parser.py</span>            <span class="comment">tested (11 tests)</span>
+│   │   └── <span class="file">locust_parser.py</span>           <span class="comment">tested (7 tests)</span>
 │   ├── <span class="dir">features/</span>
-│   │   ├── <span class="file">test_features.py</span>           <span class="comment">✅ tested — failure-prediction features</span>
-│   │   └── <span class="file">perf_features.py</span>           <span class="comment">✅ tested — rolling z-score features (bug-fixed)</span>
+│   │   ├── <span class="file">test_features.py</span>           <span class="comment">tested - failure-prediction features</span>
+│   │   └── <span class="file">perf_features.py</span>           <span class="comment">tested - rolling z-score features (bug-fixed)</span>
 │   ├── <span class="dir">models/</span>
-│   │   └── <span class="file">failure_predictor.py</span>       <span class="comment">✅ tested — Random Forest + Logistic Regression</span>
+│   │   └── <span class="file">failure_predictor.py</span>       <span class="comment">tested - Random Forest + Logistic Regression</span>
 │   ├── <span class="dir">perf_anomaly/</span>
-│   │   ├── <span class="file">anomaly_detector.py</span>        <span class="comment">✅ tested — Isolation Forest + Z-score</span>
-│   │   └── <span class="file">baseline.py</span>                <span class="comment">✅ new — leakage-free baseline stats</span>
+│   │   ├── <span class="file">anomaly_detector.py</span>        <span class="comment">tested - Isolation Forest + Z-score</span>
+│   │   └── <span class="file">baseline.py</span>                <span class="comment">new - leakage-free baseline stats</span>
 │   └── <span class="dir">ci_gate/</span>
-│       ├── <span class="file">gate.py</span>                    <span class="comment">✅ threshold scoring, encoding-safe</span>
-│       └── <span class="file">report.py</span>                  <span class="comment">✅ HTML/JSON report, encoding-safe</span>
+│       ├── <span class="file">gate.py</span>                    <span class="comment">threshold scoring, encoding-safe</span>
+│       └── <span class="file">report.py</span>                  <span class="comment">HTML/JSON report, encoding-safe</span>
 ├── <span class="dir">tests/</span>
 │   ├── <span class="file">test_ingestion.py</span>          <span class="comment">18 tests</span>
 │   ├── <span class="file">test_features.py</span>           <span class="comment">9 tests</span>
 │   ├── <span class="file">test_models.py</span>             <span class="comment">7 tests</span>
 │   └── <span class="file">test_perf_anomaly.py</span>       <span class="comment">27 tests</span>
 ├── <span class="dir">scripts/</span>
-│   ├── <span class="file">generate_sample_data.py</span>    <span class="comment">✅ UTF-8-safe on Windows now</span>
-│   └── <span class="file">run_pipeline.py</span>             <span class="comment">✅ orchestrates all 6 stages</span>
-├── <span class="dir">models/</span>                         <span class="comment"># gitignored — .pkl artifacts from last run</span>
-├── <span class="dir">reports/</span>                        <span class="comment"># gitignored — HTML/JSON/CSV from last run</span>
-├── <span class="dir">.github/workflows/</span>ci.yml        <span class="comment">✅ test matrix + ML gate + PR comment</span>
+│   ├── <span class="file">generate_sample_data.py</span>    <span class="comment">UTF-8-safe on Windows now</span>
+│   └── <span class="file">run_pipeline.py</span>             <span class="comment">orchestrates all 6 stages</span>
+├── <span class="dir">models/</span>                         <span class="comment"># gitignored - .pkl artifacts from last run</span>
+├── <span class="dir">reports/</span>                        <span class="comment"># gitignored - HTML/JSON/CSV from last run</span>
+├── <span class="dir">.github/workflows/</span>ci.yml        <span class="comment">test matrix + ML gate + PR comment</span>
 ├── <span class="file">config.yaml</span>                    <span class="comment">all tunables, incl. new baseline_fraction</span>
 ├── <span class="file">requirements.txt</span>               <span class="comment">now includes pyarrow (was missing)</span>
 ├── <span class="file">README.md</span>
@@ -79,31 +79,31 @@ qa-ml-framework/
 └── <span class="file">architecture-diagram.html</span>      <span class="comment">standalone browser view of the diagrams</span>
 </div>
 
-<h2>What "ready" means here — verified, not assumed</h2>
+<h2>What "ready" means here - verified, not assumed</h2>
 <table>
 <tr><th>Claim</th><th>How it was verified</th></tr>
 <tr><td>Failure prediction works</td><td>Trained on 4,560 feature rows, time-split CV, AUC-ROC 0.61, ranked 80 tests by <code>p_fail</code></td></tr>
-<tr><td>Perf anomaly detection works</td><td>Ran <code>fit_predict_baseline_split()</code> on 975 windows → 32 flagged (30 critical), visible in the generated HTML report</td></tr>
-<tr><td>CI gate works</td><td>Computed mean top-200 risk (0.282) vs threshold (0.35) → gate PASSED, JSON result written</td></tr>
-<tr><td>Report generation works</td><td>Opened <code>reports/prediction_report.html</code> — confirmed the Performance Anomalies section renders with real badges</td></tr>
-<tr><td>Test suite is real, not decorative</td><td>A new test (<code>test_spike_still_detected_against_clean_baseline</code>) initially <b>failed</b> and led to finding two real bugs (z-score epsilon, Windows console encoding) — both fixed and re-verified</td></tr>
+<tr><td>Perf anomaly detection works</td><td>Ran <code>fit_predict_baseline_split()</code> on 975 windows -> 32 flagged (30 critical), visible in the generated HTML report</td></tr>
+<tr><td>CI gate works</td><td>Computed mean top-200 risk (0.282) vs threshold (0.35) -> gate PASSED, JSON result written</td></tr>
+<tr><td>Report generation works</td><td>Opened <code>reports/prediction_report.html</code> - confirmed the Performance Anomalies section renders with real badges</td></tr>
+<tr><td>Test suite is real, not decorative</td><td>A new test (<code>test_spike_still_detected_against_clean_baseline</code>) initially <b>failed</b> and led to finding two real bugs (z-score epsilon, Windows console encoding) - both fixed and re-verified</td></tr>
 <tr><td>Fresh-machine install works</td><td>Installed Python 3.12 + a clean venv from <code>requirements.txt</code> on this machine and ran everything from zero</td></tr>
 </table>
 
 <h2>What "ready" does <i>not</i> mean yet</h2>
 <table>
 <tr><th>Gap</th><th>Why it matters</th></tr>
-<tr><td>Only synthetic data validated</td><td>Never run against a real pytest/Selenium suite's actual flakiness patterns — the model's real-world accuracy is unproven</td></tr>
+<tr><td>Only synthetic data validated</td><td>Never run against a real pytest/Selenium suite's actual flakiness patterns - the model's real-world accuracy is unproven</td></tr>
 <tr><td>No model drift monitoring</td><td>Nothing tracks whether the trained model degrades over time in production use</td></tr>
-<tr><td>Gate averages top-N risk</td><td><code>gate.py</code> uses <code>mean(top_10_risk) &lt; threshold</code> — one very high-risk test can be diluted by others and still pass</td></tr>
-<tr><td>Zero-variance baseline edge case</td><td>An unrealistically flat service (no noise) during the baseline window gives Isolation Forest nothing to learn from — documented, not fully solved</td></tr>
+<tr><td>Gate averages top-N risk</td><td><code>gate.py</code> uses <code>mean(top_10_risk) &lt; threshold</code> - one very high-risk test can be diluted by others and still pass</td></tr>
+<tr><td>Zero-variance baseline edge case</td><td>An unrealistically flat service (no noise) during the baseline window gives Isolation Forest nothing to learn from - documented, not fully solved</td></tr>
 </table>
 
 <h2>Last verified pipeline run (raw output)</h2>
 <div class="evidence">[5/6] Running performance anomaly detection...
 
 ==================================================
-  Performance Anomaly Detection — Summary
+  Performance Anomaly Detection - Summary
 ==================================================
   total_windows                       975
   anomaly_count                       32

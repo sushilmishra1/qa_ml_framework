@@ -9,7 +9,7 @@ build/
 *.egg-info/
 .eggs/
 
-# Data and model files (too large for Git — use DVC or Git LFS for real data)
+# Data and model files (too large for Git - use DVC or Git LFS for real data)
 data/raw/
 data/processed/
 models/*.pkl

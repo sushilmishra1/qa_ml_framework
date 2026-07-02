@@ -27,7 +27,7 @@ def build_feature_matrix(
     """Build the ML feature matrix from test run history.
 
     For each (test_id, run) pair, compute features using only data
-    from BEFORE that run (strict temporal ordering — no leakage).
+    from BEFORE that run (strict temporal ordering - no leakage).
 
     Args:
         history_df:  DataFrame from junit_parser with columns:
@@ -41,7 +41,7 @@ def build_feature_matrix(
             test_id, run_timestamp, commit_sha,
             failure_rate_30d, avg_duration_ms, duration_stddev,
             days_since_last_fail, flakiness_score, file_overlap_score,
-            is_failed (label — 1=fail/error, 0=pass/skip)
+            is_failed (label - 1=fail/error, 0=pass/skip)
     """
     df = history_df.copy()
     df["is_failed"] = df["status"].isin(["failed", "error"]).astype(int)
@@ -65,22 +65,22 @@ def build_feature_matrix(
                 "test_id": test_id,
                 "run_timestamp": cutoff,
                 "commit_sha": row["commit_sha"],
-                # ── Failure rate features ──────────────────────────────
+                # --- Failure rate features ---
                 "failure_rate_30d": _safe_mean(recent["is_failed"]),
                 "failure_rate_all": _safe_mean(past["is_failed"]),
-                # ── Duration features (proxy for infrastructure dep) ───
+                # --- Duration features (proxy for infrastructure dep) ---
                 "avg_duration_ms": past["duration_ms"].mean(),
                 "duration_stddev": past["duration_ms"].std(ddof=0),
                 "duration_cv": _coeff_variation(past["duration_ms"]),
-                # ── Recency features ──────────────────────────────────
+                # --- Recency features ---
                 "days_since_last_fail": _days_since_last_fail(past, cutoff),
                 "consecutive_passes": _consecutive_passes(past),
-                # ── Flakiness score (alternating pass/fail on same SHA) ─
+                # --- Flakiness score (alternating pass/fail on same SHA) ---
                 "flakiness_score": _flakiness_score(past),
-                # ── File overlap (from churn_df if provided) ──────────
+                # --- File overlap (from churn_df if provided) ---
                 "file_overlap_score": _get_overlap(churn_df, test_id,
                                                    row["commit_sha"]),
-                # ── Label ──────────────────────────────────────────────
+                # --- Label ---
                 "is_failed": row["is_failed"],
             }
             rows.append(features)
@@ -90,7 +90,7 @@ def build_feature_matrix(
     return feature_df
 
 
-# ── Feature helper functions ──────────────────────────────────────────────
+# --- Feature helper functions ---
 
 def _safe_mean(series: pd.Series) -> float:
     """Mean that returns 0.0 on empty series."""
@@ -150,7 +150,7 @@ def _get_overlap(churn_df: pd.DataFrame, test_id: str,
     return float(matches.iloc[0]) if not matches.empty else 0.0
 
 
-# ── Feature column sets (used by model training) ─────────────────────────
+# --- Feature column sets (used by model training) ---
 
 FEATURE_COLUMNS = [
     "failure_rate_30d",

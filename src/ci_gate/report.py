@@ -7,7 +7,7 @@ Generates a self-contained HTML report summarising:
   - Performance anomaly timeline
   - CI gate decision
 
-The HTML is a single file with embedded CSS — no external dependencies.
+The HTML is a single file with embedded CSS - no external dependencies.
 Open it directly in a browser or attach it as a GitHub Actions artifact.
 """
 
@@ -22,7 +22,7 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>QA ML Framework — Report</title>
+<title>QA ML Framework - Report</title>
 <style>
   body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
          margin: 0; padding: 24px; background: #f8f8f6; color: #1a1a18; }}
@@ -54,7 +54,7 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
 </style>
 </head>
 <body>
-<h1>QA ML Framework — Prediction Report</h1>
+<h1>QA ML Framework - Prediction Report</h1>
 <p class="meta">Generated: {timestamp} &nbsp;|&nbsp; Commit: {commit_sha}</p>
 
 {gate_block}
@@ -99,11 +99,10 @@ def generate_html_report(
     if gate_result:
         status = gate_result.get("gate_passed", False)
         cls = "gate-pass" if status else "gate-fail"
-        icon = "✅" if status else "❌"
         gate_block = f"""
 <h2>CI Gate Decision</h2>
 <div class="{cls}">
-  <strong>{icon} Gate {'PASSED' if status else 'FAILED'}</strong>&nbsp;&nbsp;
+  <strong>Gate {'PASSED' if status else 'FAILED'}</strong>&nbsp;&nbsp;
   Mean top-risk score: <strong>{gate_result.get('mean_top_risk', 0):.4f}</strong>
   &nbsp;/&nbsp; Threshold: {gate_result.get('risk_threshold', 0):.4f}
   &nbsp;|&nbsp; High-risk tests: {gate_result.get('high_risk_count', 0)}
@@ -198,5 +197,5 @@ def generate_html_report(
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html)
 
-    print(f"HTML report → {output_path}")
+    print(f"HTML report -> {output_path}")
     return output_path

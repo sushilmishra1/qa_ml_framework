@@ -21,7 +21,7 @@ DataFrame schema (from stats_history):
     min_ms          : float    - minimum response time (ms)
     max_ms          : float    - maximum response time (ms)
     rps             : float    - requests per second
-    error_rate      : float    - failure rate 0.0–1.0
+    error_rate      : float    - failure rate 0.0-1.0
 """
 
 import os
@@ -108,7 +108,7 @@ def parse_locust_stats(csv_path: str) -> pd.DataFrame:
         csv_path: Path to the Locust stats CSV.
 
     Returns:
-        DataFrame with one row per endpoint — aggregate for the full run.
+        DataFrame with one row per endpoint - aggregate for the full run.
     """
     df = pd.read_csv(csv_path)
     df.rename(columns={k: v for k, v in _STATS_COLUMNS.items() if k in df.columns},

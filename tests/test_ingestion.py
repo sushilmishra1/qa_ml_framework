@@ -16,7 +16,7 @@ from src.ingestion.junit_parser import parse_junit_file, parse_junit_directory
 from src.ingestion.locust_parser import parse_locust_history, parse_locust_stats
 
 
-# ── Fixtures ──────────────────────────────────────────────────────────────
+# --- Fixtures ---
 
 SAMPLE_JUNIT_XML = """<?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
@@ -54,7 +54,7 @@ def locust_csv_file(tmp_path):
     return str(csv_file)
 
 
-# ── JUnit parser tests ─────────────────────────────────────────────────────
+# --- JUnit parser tests ---
 
 class TestJUnitParser:
 
@@ -125,7 +125,7 @@ class TestJUnitParser:
             parse_junit_directory("/nonexistent/path")
 
 
-# ── Locust parser tests ────────────────────────────────────────────────────
+# --- Locust parser tests ---
 
 class TestLocustParser:
 
@@ -149,7 +149,7 @@ class TestLocustParser:
         assert (df["error_rate"] <= 1.0).all()
 
     def test_parse_error_rate_spike_detected(self, locust_csv_file):
-        """Third row has Failures/s=2.5 and Requests/s=45.0 → error_rate ≈ 0.055."""
+        """Third row has Failures/s=2.5 and Requests/s=45.0 -> error_rate ~ 0.055."""
         df = parse_locust_history(locust_csv_file)
         spike_row = df.iloc[2]
         assert spike_row["error_rate"] > 0.04

@@ -2,7 +2,7 @@
 anomaly_detector.py
 -------------------
 Detects performance anomalies in Locust/JMeter test results using:
-    1. Isolation Forest (multivariate — response time + throughput + errors)
+    1. Isolation Forest (multivariate - response time + throughput + errors)
     2. Z-score threshold (simple, explainable single-metric alerts)
 
 Isolation Forest is ideal for performance testing because:
@@ -12,7 +12,7 @@ Isolation Forest is ideal for performance testing because:
     - sklearn IsolationForest is the industry standard implementation
 
 How it works:
-    Anomalies are rare and different — they are easier to ISOLATE than
+    Anomalies are rare and different - they are easier to ISOLATE than
     normal points. IsolationForest builds random trees and measures how
     few splits it takes to isolate a point. Anomalies need fewer splits
     because they sit in sparse regions of feature space.
@@ -48,7 +48,7 @@ class PerformanceAnomalyDetector:
     ):
         """
         Args:
-            contamination:    Expected fraction of anomalies (0.01–0.5).
+            contamination:    Expected fraction of anomalies (0.01-0.5).
                               0.05 = assume 5% of windows are anomalous.
             zscore_threshold: Simple Z-score cutoff for single-metric alerts.
             random_state:     Reproducibility seed.
@@ -66,7 +66,7 @@ class PerformanceAnomalyDetector:
         ])
         self._is_fitted = False
 
-    # ── Public API ─────────────────────────────────────────────────────────
+    # --- Public API ---
 
     def fit(self, feature_df: pd.DataFrame) -> "PerformanceAnomalyDetector":
         """Fit the Isolation Forest on a baseline set of performance data.
@@ -162,14 +162,14 @@ class PerformanceAnomalyDetector:
         self._check_fitted()
         os.makedirs(os.path.dirname(path), exist_ok=True)
         joblib.dump(self, path)
-        print(f"Anomaly detector saved → {path}")
+        print(f"Anomaly detector saved -> {path}")
 
     @classmethod
     def load(cls, path: str) -> "PerformanceAnomalyDetector":
         """Load a previously fitted detector."""
         return joblib.load(path)
 
-    # ── Private helpers ────────────────────────────────────────────────────
+    # --- Private helpers ---
 
     def _check_fitted(self) -> None:
         if not self._is_fitted:
@@ -202,7 +202,7 @@ class PerformanceAnomalyDetector:
         }
 
         print(f"\n{'='*50}")
-        print("  Performance Anomaly Detection — Summary")
+        print("  Performance Anomaly Detection - Summary")
         print(f"{'='*50}")
         for k, v in summary.items():
             print(f"  {k:<35} {v}")

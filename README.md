@@ -1,6 +1,6 @@
 # qa-ml-framework
 
-> **ML-powered QA intelligence** — test failure prediction, risk-based prioritisation, and performance anomaly detection.  
+> **ML-powered QA intelligence** - test failure prediction, risk-based prioritisation, and performance anomaly detection.  
 > Pure Python · No AI/LLM dependencies · No cloud services required · GitHub Actions CI gate included.
 
 ---
@@ -26,8 +26,8 @@ qa-ml-framework/
 │   └── processed/              # Engineered feature DataFrames (parquet)
 ├── src/
 │   ├── ingestion/
-│   │   ├── junit_parser.py     # Parse JUnit XML → DataFrame
-│   │   └── locust_parser.py    # Parse Locust CSV → DataFrame
+│   │   ├── junit_parser.py     # Parse JUnit XML -> DataFrame
+│   │   └── locust_parser.py    # Parse Locust CSV -> DataFrame
 │   ├── features/
 │   │   ├── test_features.py    # Feature engineering for failure prediction
 │   │   └── perf_features.py    # Feature engineering for perf anomaly
@@ -88,28 +88,28 @@ pytest tests/ -v --junitxml=reports/test_results.xml
 
 ## Data sources (industry standard)
 
-### Test history — JUnit XML
+### Test history - JUnit XML
 Every major test runner outputs JUnit XML:
 - **pytest**: `pytest --junitxml=results.xml`
 - **TestNG / JUnit**: default output
 - **Selenium Grid**: via `pytest-selenium`
 - **Cypress / Playwright**: via JUnit reporter plugins
 
-### Performance data — Locust CSV
+### Performance data - Locust CSV
 Locust exports `*_stats.csv` and `*_stats_history.csv` after every run.  
 JMeter exports similar CSV via the Summary Report listener.
 
 ---
 
-## Feature engineering — what the model sees
+## Feature engineering - what the model sees
 
 | Feature | Source | Why it matters |
 |---------|--------|---------------|
-| `failure_rate_30d` | JUnit XML history | Rolling 30-day failure rate — most predictive |
+| `failure_rate_30d` | JUnit XML history | Rolling 30-day failure rate - most predictive |
 | `avg_duration_ms` | JUnit XML | Slow tests = infrastructure dependency = flakiness proxy |
 | `duration_stddev` | JUnit XML | High variance = flaky behaviour |
-| `days_since_last_fail` | JUnit XML | Staleness signal — recent failures more relevant |
-| `consec_alternating` | JUnit XML | Pass→fail→pass on same SHA = flaky flag |
+| `days_since_last_fail` | JUnit XML | Staleness signal - recent failures more relevant |
+| `consec_alternating` | JUnit XML | Pass->fail->pass on same SHA = flaky flag |
 | `file_overlap_score` | git diff + coverage | How many changed files overlap test coverage |
 | `module_churn_7d` | git log | Code churn in the module under test |
 | `author_fail_rate` | JUnit + git | Author-level historical defect rate |
@@ -130,7 +130,7 @@ section of `reports/prediction_report.html`, suitable for CI gate or Grafana ale
 **Fitting strategy**: the pipeline uses `fit_predict_baseline_split()`, which fits the
 Isolation Forest only on the earliest `anomaly.baseline_fraction` of the run (a trusted
 baseline period) and scores the rest against it. This avoids the leakage of the simpler
-`fit_predict()` convenience method, which fits and scores the same window — letting real
+`fit_predict()` convenience method, which fits and scores the same window - letting real
 anomalies calibrate the detector's own notion of "normal."
 
 ---
@@ -152,11 +152,11 @@ else:
 
 ## Design decisions
 
-- **Random Forest over XGBoost**: `feature_importances_` gives a QA lead a direct answer for *why* a test was flagged, which matters when the model is going to block a PR — an unexplainable rejection erodes trust in the gate fast.
+- **Random Forest over XGBoost**: `feature_importances_` gives a QA lead a direct answer for *why* a test was flagged, which matters when the model is going to block a PR - an unexplainable rejection erodes trust in the gate fast.
 - **Time-split CV, not k-fold**: test runs are time-ordered. Random k-fold would let future runs leak into training and inflate offline metrics beyond what the model can actually do in production.
 - **Isolation Forest for flakiness**: there's no labelled "this test is flaky" dataset to supervise against, so detection has to be unsupervised.
 - **F1/precision@k over accuracy**: the pass rate is ~95%, so a trivial "always predict pass" classifier would already score 95% accuracy while catching zero real failures. Accuracy would hide exactly the failure mode this tool exists to catch.
-- **Statistical perf anomaly detection, no LLM**: Z-score for simple single-metric thresholds, Isolation Forest for multivariate anomalies across response_time + throughput + error_rate together — cheaper, faster, and auditable compared to a model-based approach for a problem that doesn't need one.
+- **Statistical perf anomaly detection, no LLM**: Z-score for simple single-metric thresholds, Isolation Forest for multivariate anomalies across response_time + throughput + error_rate together - cheaper, faster, and auditable compared to a model-based approach for a problem that doesn't need one.
 
 ---
 

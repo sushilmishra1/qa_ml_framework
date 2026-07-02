@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>QA ML Framework — Architecture</title>
+<title>QA ML Framework - Architecture</title>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <style>
   body { font-family: -apple-system, Segoe UI, Arial, sans-serif; max-width: 1100px; margin: 40px auto; padding: 0 20px; line-height: 1.5; color: #1a1a1a; }
@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<h1>QA ML Framework — Architecture</h1>
+<h1>QA ML Framework - Architecture</h1>
 <p>A visual walkthrough of how raw test/perf data becomes a merge-blocking risk score.</p>
 
 <h2>1. System overview</h2>
@@ -30,12 +30,12 @@ flowchart TB
         A3["git log / git diff\nchurn, file overlap, author history"]
     end
 
-    subgraph ING["Ingestion — src/ingestion/"]
+    subgraph ING["Ingestion - src/ingestion/"]
         B1["junit_parser.py\nXML -> DataFrame"]
         B2["locust_parser.py\nCSV -> DataFrame"]
     end
 
-    subgraph FEAT["Feature Engineering — src/features/"]
+    subgraph FEAT["Feature Engineering - src/features/"]
         C1["test_features.py\nfailure_rate_30d, duration_stddev,\nconsec_alternating, churn, author_fail_rate"]
         C2["perf_features.py\nrolling baseline mean/stddev/percentiles"]
     end
@@ -44,7 +44,7 @@ flowchart TB
         D1[("data/processed/\n*.parquet")]
     end
 
-    subgraph MODEL["ML Models — src/models/ & src/perf_anomaly/"]
+    subgraph MODEL["ML Models - src/models/ & src/perf_anomaly/"]
         E1["failure_predictor.py\nRandom Forest + Logistic Regression\ntime-split CV"]
         E2["flaky_detector.py\nIsolation Forest (unsupervised)"]
         E3["anomaly_detector.py\nIsolation Forest + Z-score"]
@@ -54,7 +54,7 @@ flowchart TB
         F1[("models/*.pkl")]
     end
 
-    subgraph GATE["CI Gate — src/ci_gate/"]
+    subgraph GATE["CI Gate - src/ci_gate/"]
         G1["gate.py\nscore top-N tests vs risk_threshold\npass / fail decision"]
         G2["report.py\nHTML + JSON report"]
     end
@@ -117,8 +117,8 @@ flowchart LR
     T --> MG{"pull_request event?"}
     MG -- yes --> G1["Job: ml-gate\ngenerate/ingest data -> run_pipeline.py"]
     G1 --> G2["ci_gate.gate\nmean(top-10 risk) vs threshold"]
-    G2 -- pass --> M["✅ Merge allowed"]
-    G2 -- fail --> B["❌ PR blocked"]
+    G2 -- pass --> M["Merge allowed"]
+    G2 -- fail --> B["PR blocked"]
     G2 --> Art["Upload artifacts:\nprediction_report.html, gate_result.json"]
     G2 --> Cmt["Auto-comment on PR\nrisk table + pass/fail"]
 </div>
@@ -126,22 +126,22 @@ flowchart LR
 <h2>4. Component responsibility map</h2>
 <table>
 <tr><th>Layer</th><th>Module</th><th>Responsibility</th><th>Technique</th></tr>
-<tr><td>Ingestion</td><td><code>src/ingestion/junit_parser.py</code></td><td>XML → tabular test history</td><td>lxml</td></tr>
-<tr><td>Ingestion</td><td><code>src/ingestion/locust_parser.py</code></td><td>Perf CSV → tabular time series</td><td>pandas</td></tr>
+<tr><td>Ingestion</td><td><code>src/ingestion/junit_parser.py</code></td><td>XML -> tabular test history</td><td>lxml</td></tr>
+<tr><td>Ingestion</td><td><code>src/ingestion/locust_parser.py</code></td><td>Perf CSV -> tabular time series</td><td>pandas</td></tr>
 <tr><td>Features</td><td><code>src/features/test_features.py</code></td><td>Rolling failure rate, flakiness signals, churn</td><td>pandas</td></tr>
 <tr><td>Features</td><td><code>src/features/perf_features.py</code></td><td>Rolling baseline stats</td><td>pandas</td></tr>
 <tr><td>Model</td><td><code>src/models/failure_predictor.py</code></td><td>P(test fails on this commit)</td><td>Random Forest + Logistic Regression, time-split CV</td></tr>
 <tr><td>Model</td><td><code>src/models/flaky_detector.py</code></td><td>Flag non-deterministic tests</td><td>Isolation Forest (unsupervised)</td></tr>
 <tr><td>Model</td><td><code>src/perf_anomaly/anomaly_detector.py</code></td><td>Perf regression detection</td><td>Isolation Forest + Z-score</td></tr>
-<tr><td>Decision</td><td><code>src/ci_gate/gate.py</code></td><td>Threshold scoring → pass/fail</td><td>rule on top-N mean risk</td></tr>
+<tr><td>Decision</td><td><code>src/ci_gate/gate.py</code></td><td>Threshold scoring -> pass/fail</td><td>rule on top-N mean risk</td></tr>
 <tr><td>Reporting</td><td><code>src/ci_gate/report.py</code></td><td>Human-readable output</td><td>HTML/JSON generation</td></tr>
-<tr><td>Orchestration</td><td><code>scripts/run_pipeline.py</code></td><td>Wires all 6 stages end-to-end</td><td>—</td></tr>
+<tr><td>Orchestration</td><td><code>scripts/run_pipeline.py</code></td><td>Wires all 6 stages end-to-end</td><td>-</td></tr>
 <tr><td>Delivery</td><td><code>.github/workflows/ci.yml</code></td><td>Test matrix + risk gate + PR feedback</td><td>GitHub Actions</td></tr>
 </table>
 
 <h2>5. Design rationale</h2>
 <ul>
-<li><b>Layered, not monolithic</b>: ingestion / features / model / decision / reporting are separate modules — each independently testable and swappable (e.g. Locust parser could be replaced by JMeter without touching the model layer).</li>
+<li><b>Layered, not monolithic</b>: ingestion / features / model / decision / reporting are separate modules - each independently testable and swappable (e.g. Locust parser could be replaced by JMeter without touching the model layer).</li>
 <li><b>Time-split CV, not k-fold</b>: test results are time-ordered; k-fold would leak future data into training and produce offline metrics the model can't actually hit in production.</li>
 <li><b>Random Forest over XGBoost</b>: <code>feature_importances_</code> gives an interpretable answer to "why was this test flagged" when the gate blocks a PR.</li>
 <li><b>Unsupervised where labels don't exist</b>: flaky-test detection and perf anomalies have no ground-truth labels, so Isolation Forest is used instead of forcing a supervised approach.</li>
@@ -151,7 +151,7 @@ flowchart LR
 
 <h2>6. Known limitations (not yet solved)</h2>
 <ul>
-<li><b>Validated on synthetic data only.</b> Never run against a real project's accumulated CI/perf history — only against the synthetic generator's cleaner, hand-injected patterns.</li>
+<li><b>Validated on synthetic data only.</b> Never run against a real project's accumulated CI/perf history - only against the synthetic generator's cleaner, hand-injected patterns.</li>
 <li><b>No drift monitoring.</b> Nothing tracks whether a deployed model's accuracy degrades as the suite and codebase evolve.</li>
 <li><b>Gate averages top-N risk.</b> One severely at-risk test can be diluted by nine lower-risk ones and still pass the mean-based threshold.</li>
 <li><b>Rolling z-score features self-normalize.</b> A regression that outlasts <code>baseline_window</code> samples gets absorbed into its own rolling baseline and the anomaly score decays back toward zero.</li>

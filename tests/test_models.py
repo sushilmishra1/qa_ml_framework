@@ -13,7 +13,7 @@ from src.features.test_features import build_feature_matrix
 from src.models.failure_predictor import FailurePredictor
 
 
-# ── Fixtures ──────────────────────────────────────────────────────────────
+# --- Fixtures ---
 
 def _make_history(n_tests: int = 5, n_runs: int = 20, failure_rate: float = 0.1):
     """Build a minimal synthetic history DataFrame."""

@@ -57,7 +57,7 @@ def parse_junit_file(xml_path: str, commit_sha: str = "unknown") -> pd.DataFrame
             name = tc.get("name", "")
             classname = tc.get("classname", "")
             test_id = f"{classname}::{name}" if classname else name
-            duration_ms = float(tc.get("time", 0)) * 1000  # convert seconds → ms
+            duration_ms = float(tc.get("time", 0)) * 1000  # convert seconds -> ms
 
             failure = tc.find("failure")
             error = tc.find("error")
@@ -102,8 +102,8 @@ def parse_junit_directory(dir_path: str) -> pd.DataFrame:
     """Parse all JUnit XML files in a directory recursively.
 
     Filenames are expected to optionally encode the commit SHA:
-        results_abc1234.xml  →  commit_sha = 'abc1234'
-        results.xml          →  commit_sha = 'unknown'
+        results_abc1234.xml  ->  commit_sha = 'abc1234'
+        results.xml          ->  commit_sha = 'unknown'
 
     Args:
         dir_path: Directory containing JUnit XML reports.

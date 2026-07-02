@@ -28,7 +28,7 @@ SEED = 42
 random.seed(SEED)
 np.random.seed(SEED)
 
-# ── Test suite definition ─────────────────────────────────────────────────
+# --- Test suite definition ---
 
 MODULES = [
     "auth", "payments", "orders", "users", "inventory",
@@ -56,7 +56,7 @@ FLAKY_TESTS = {
 
 NORMAL_FAILURE_RATE = 0.04  # ~4% baseline failure rate
 
-# ── JUnit XML generation ──────────────────────────────────────────────────
+# --- JUnit XML generation ---
 
 def _random_sha() -> str:
     return "".join(random.choices(string.hexdigits[:16], k=8))
@@ -144,10 +144,10 @@ def generate_junit_history(
         with open(filepath, "w") as f:
             f.write(xml_content)
 
-    print(f"Generated {n_runs} JUnit XML files → {output_dir}")
+    print(f"Generated {n_runs} JUnit XML files -> {output_dir}")
 
 
-# ── Locust CSV generation ─────────────────────────────────────────────────
+# --- Locust CSV generation ---
 
 ENDPOINTS = [
     "POST /api/auth/login",
@@ -199,7 +199,7 @@ def generate_locust_history(
             median, stddev = _baseline_response_time(endpoint)
 
             if is_anomaly:
-                # Spike: 3–6x normal response time + elevated error rate
+                # Spike: 3-6x normal response time + elevated error rate
                 spike = random.uniform(3.0, 6.0)
                 median_val = median * spike + random.gauss(0, stddev * 2)
                 error_rate = random.uniform(0.05, 0.25)
@@ -236,12 +236,12 @@ def generate_locust_history(
     df = pd.DataFrame(rows)
     out_path = os.path.join(output_dir, "loadtest_stats_history.csv")
     df.to_csv(out_path, index=False)
-    print(f"Generated Locust history CSV ({len(df)} rows) → {out_path}")
+    print(f"Generated Locust history CSV ({len(df)} rows) -> {out_path}")
     print(f"  Anomaly windows injected at positions: "
           f"{sorted(anomaly_windows)[:5]}... ({len(anomaly_windows)} total)")
 
 
-# ── Entry point ────────────────────────────────────────────────────────────
+# --- Entry point ---
 
 if __name__ == "__main__":
     # Console output below uses unicode arrows; Windows terminals default to

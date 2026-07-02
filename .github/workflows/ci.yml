@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  # ── Job 1: Lint + Unit Tests ─────────────────────────────────────────────
+  # --- Job 1: Lint + Unit Tests ---
   test:
     name: Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
@@ -53,7 +53,7 @@ jobs:
           name: coverage-${{ matrix.python-version }}
           path: reports/coverage.xml
 
-  # ── Job 2: ML Risk Gate (on PRs to main) ─────────────────────────────────
+  # --- Job 2: ML Risk Gate (on PRs to main) ---
   ml-gate:
     name: ML Risk Gate
     runs-on: ubuntu-latest
@@ -78,7 +78,7 @@ jobs:
       - name: Generate sample data (if no real data present)
         run: |
           if [ ! -d "data/raw/junit" ]; then
-            echo "No JUnit data found — generating synthetic data for demo"
+            echo "No JUnit data found - generating synthetic data for demo"
             python scripts/generate_sample_data.py
           fi
 
@@ -118,21 +118,20 @@ jobs:
               console.log('Could not read gate result:', e.message);
               return;
             }
-            const icon = gateResult.gate_passed ? '✅' : '❌';
             const status = gateResult.gate_passed ? 'PASSED' : 'FAILED';
-            const body = `## ${icon} QA ML Gate — ${status}
-            
-| Metric | Value |
-|--------|-------|
-| Mean risk score (top-200) | \`${gateResult.mean_top_risk}\` |
-| Threshold | \`${gateResult.risk_threshold}\` |
-| High-risk tests | \`${gateResult.high_risk_count}\` |
-| Total tests evaluated | \`${gateResult.total_tests}\` |
+            const body = `## QA ML Gate - ${status}
 
-${gateResult.gate_passed 
-  ? '✅ All tests are within acceptable risk threshold.' 
-  : '❌ Some tests exceed the risk threshold. Review the uploaded report artifact.'}
-`;
+            | Metric | Value |
+            |--------|-------|
+            | Mean risk score (top-200) | \`${gateResult.mean_top_risk}\` |
+            | Threshold | \`${gateResult.risk_threshold}\` |
+            | High-risk tests | \`${gateResult.high_risk_count}\` |
+            | Total tests evaluated | \`${gateResult.total_tests}\` |
+
+            ${gateResult.gate_passed
+              ? 'All tests are within acceptable risk threshold.'
+              : 'Some tests exceed the risk threshold. Review the uploaded report artifact.'}
+            `;
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,

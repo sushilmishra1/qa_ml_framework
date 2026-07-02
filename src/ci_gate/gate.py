@@ -4,7 +4,7 @@ gate.py
 CI gate: reads model predictions, applies thresholds, exits 0 (pass) or 1 (fail).
 
 This is the script called by GitHub Actions / Jenkins as the last pipeline step.
-It follows the same pattern as code coverage gates — set a floor, block regressions.
+It follows the same pattern as code coverage gates - set a floor, block regressions.
 
 Exit codes (standard CI convention):
     0 = gate passed (safe to merge)
@@ -91,9 +91,8 @@ def run_gate(
         json.dump(result, f, indent=2)
 
     # Print CI-friendly summary
-    status_icon = "✅" if gate_passed else "❌"
     print(f"\n{'='*55}")
-    print(f"  {status_icon}  QA ML Gate Result")
+    print(f"  QA ML Gate Result")
     print(f"{'='*55}")
     print(f"  Mean risk score (top-{top_n_tests} tests): {mean_top_risk:.4f}")
     print(f"  Threshold:                          {risk_threshold:.4f}")
@@ -102,15 +101,15 @@ def run_gate(
     print(f"{'='*55}")
 
     if not gate_passed:
-        print(f"\n  ❌ Gate FAILED — {len(high_risk)} tests exceed risk threshold {risk_threshold}")
+        print(f"\n  Gate FAILED - {len(high_risk)} tests exceed risk threshold {risk_threshold}")
         print("  Top high-risk tests:")
         for _, row in high_risk.head(5).iterrows():
             print(f"    [{row['p_fail']:.3f}]  {row.get('test_id', 'unknown')}")
-        print(f"\n  Gate result saved → {output_path}")
+        print(f"\n  Gate result saved -> {output_path}")
         return 1
 
-    print(f"\n  ✅ Gate PASSED — safe to merge")
-    print(f"  Gate result saved → {output_path}")
+    print(f"\n  Gate PASSED - safe to merge")
+    print(f"  Gate result saved -> {output_path}")
     return 0
 
 
@@ -121,7 +120,7 @@ def main():
         sys.stdout.reconfigure(encoding="utf-8")
 
     parser = argparse.ArgumentParser(
-        description="QA ML CI Gate — blocks PRs if predicted failure risk is too high"
+        description="QA ML CI Gate - blocks PRs if predicted failure risk is too high"
     )
     parser.add_argument(
         "predictions",

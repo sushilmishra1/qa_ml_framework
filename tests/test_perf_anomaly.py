@@ -22,7 +22,7 @@ from src.perf_anomaly.baseline import (
 )
 
 
-# ── Fixtures ──────────────────────────────────────────────────────────────
+# --- Fixtures ---
 
 def _make_perf_history(n_windows: int = 80, spike_at: int = 60, noisy: bool = False):
     """Build synthetic Locust-style performance history with one anomaly.
@@ -50,7 +50,7 @@ def _make_perf_history(n_windows: int = 80, spike_at: int = 60, noisy: bool = Fa
     return pd.DataFrame(rows)
 
 
-# ── Feature tests ─────────────────────────────────────────────────────────
+# --- Feature tests ---
 
 class TestPerfFeatures:
 
@@ -92,7 +92,7 @@ class TestPerfFeatures:
         assert features["z_p95_ms"].abs().max() < 1e6
 
 
-# ── Baseline tests ────────────────────────────────────────────────────────
+# --- Baseline tests ---
 
 class TestBaselineStats:
 
@@ -142,7 +142,7 @@ class TestBaselineStats:
         assert loaded.loc["GET /api/test", "n_samples"] == stats.loc["GET /api/test", "n_samples"]
 
 
-# ── Anomaly detector tests ─────────────────────────────────────────────────
+# --- Anomaly detector tests ---
 
 class TestAnomalyDetector:
 

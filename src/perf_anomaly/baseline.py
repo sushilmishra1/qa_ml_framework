@@ -5,7 +5,7 @@ Computes and persists baseline performance statistics (mean, stddev,
 percentiles) per endpoint from a trusted historical period.
 
 Used to fit the anomaly detector on known-good data rather than on the same
-window being scored — fitting and scoring the same window lets injected
+window being scored - fitting and scoring the same window lets injected
 anomalies calibrate their own detector (see anomaly_detector.fit_predict
 docstring).
 """

@@ -1,7 +1,7 @@
 """
 run_pipeline.py
 ---------------
-End-to-end pipeline: ingest → features → train → predict → anomaly detect → report.
+End-to-end pipeline: ingest -> features -> train -> predict -> anomaly detect -> report.
 
 Run this after generate_sample_data.py:
     python scripts/run_pipeline.py
@@ -40,10 +40,10 @@ def run_full_pipeline(config_path: str = "config.yaml", ci_mode: bool = False):
     """Run the complete QA ML pipeline."""
     config = load_config(config_path)
     print("\n" + "="*60)
-    print("  QA ML Framework — Full Pipeline")
+    print("  QA ML Framework - Full Pipeline")
     print("="*60)
 
-    # ── Step 1: Ingest test history ───────────────────────────────────────
+    # --- Step 1: Ingest test history ---
     print("\n[1/6] Ingesting JUnit XML history...")
     junit_dir = os.path.join(config["data"]["raw_dir"], "junit")
     if not os.path.exists(junit_dir):
@@ -54,7 +54,7 @@ def run_full_pipeline(config_path: str = "config.yaml", ci_mode: bool = False):
     print(f"  Loaded {len(history_df)} test results across "
           f"{history_df['test_id'].nunique()} unique tests")
 
-    # ── Step 2: Feature engineering ──────────────────────────────────────
+    # --- Step 2: Feature engineering ---
     print("\n[2/6] Building feature matrix...")
     rolling_days = config["features"]["rolling_window_days"]
     feature_df = build_feature_matrix(history_df, rolling_days=rolling_days)
@@ -66,7 +66,7 @@ def run_full_pipeline(config_path: str = "config.yaml", ci_mode: bool = False):
     Path(processed_dir).mkdir(parents=True, exist_ok=True)
     feature_df.to_parquet(os.path.join(processed_dir, "features.parquet"), index=False)
 
-    # ── Step 3: Train failure predictor ──────────────────────────────────
+    # --- Step 3: Train failure predictor ---
     print("\n[3/6] Training failure predictor (Random Forest)...")
     predictor = FailurePredictor(
         model_type="random_forest",
@@ -81,7 +81,7 @@ def run_full_pipeline(config_path: str = "config.yaml", ci_mode: bool = False):
     Path(models_dir).mkdir(exist_ok=True)
     predictor.save(os.path.join(models_dir, "failure_predictor.pkl"))
 
-    # ── Step 4: Generate predictions for current tests ───────────────────
+    # --- Step 4: Generate predictions for current tests ---
     print("\n[4/6] Generating predictions...")
     # Use the most recent snapshot of each test (simulate "current run")
     latest = (
@@ -95,10 +95,10 @@ def run_full_pipeline(config_path: str = "config.yaml", ci_mode: bool = False):
     predictions_path = os.path.join(config["reports"]["output_dir"], "predictions.csv")
     Path(predictions_path).parent.mkdir(exist_ok=True)
     predictions.to_csv(predictions_path, index=False)
-    print(f"  Predicted {len(predictions)} tests → {predictions_path}")
+    print(f"  Predicted {len(predictions)} tests -> {predictions_path}")
     print(f"  High-risk (>0.35): {(predictions['p_fail'] >= 0.35).sum()}")
 
-    # ── Step 5: Performance anomaly detection ────────────────────────────
+    # --- Step 5: Performance anomaly detection ---
     print("\n[5/6] Running performance anomaly detection...")
     anomaly_results = None
     locust_dir = os.path.join(config["data"]["raw_dir"], "locust")
@@ -124,7 +124,7 @@ def run_full_pipeline(config_path: str = "config.yaml", ci_mode: bool = False):
     else:
         print(f"  Skipping perf anomaly (no Locust CSV at {locust_csv})")
 
-    # ── Step 6: CI gate + HTML report ────────────────────────────────────
+    # --- Step 6: CI gate + HTML report ---
     print("\n[6/6] Running CI gate and generating report...")
     gate_result_path = os.path.join(config["reports"]["output_dir"], "gate_result.json")
     exit_code = run_gate(
@@ -148,7 +148,7 @@ def run_full_pipeline(config_path: str = "config.yaml", ci_mode: bool = False):
     print(f"\n{'='*60}")
     print("  Pipeline complete!")
     print(f"  Report:     {report_path}")
-    print(f"  Gate:       {'PASSED ✅' if gate_result['gate_passed'] else 'FAILED ❌'}")
+    print(f"  Gate:       {'PASSED' if gate_result['gate_passed'] else 'FAILED'}")
     print(f"{'='*60}\n")
 
     if ci_mode:
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
 
-    parser = argparse.ArgumentParser(description="QA ML Framework — Pipeline Runner")
+    parser = argparse.ArgumentParser(description="QA ML Framework - Pipeline Runner")
     parser.add_argument("--config", default="config.yaml")
     parser.add_argument("--ci-mode", action="store_true",
                         help="Exit with gate exit code (for CI integration)")

@@ -5,7 +5,7 @@ Test failure prediction using Random Forest (primary) and
 Logistic Regression (interpretable baseline).
 
 Key design decisions:
-    - Time-based train/test split (NOT random k-fold — avoids temporal leakage)
+    - Time-based train/test split (NOT random k-fold - avoids temporal leakage)
     - class_weight='balanced' to handle the ~5% failure rate imbalance
     - Feature importance output so a blocked PR comes with a reason, not just a score
     - Model persistence via joblib for CI gate reuse
@@ -59,7 +59,7 @@ class FailurePredictor:
         self._is_trained = False
         self.feature_importances_ = None
 
-    # ── Public API ─────────────────────────────────────────────────────────
+    # --- Public API ---
 
     def train(self, feature_df: pd.DataFrame, split_days: int = 14) -> dict:
         """Train the model using a time-based split.
@@ -117,7 +117,7 @@ class FailurePredictor:
         }
 
         print(f"\n{'='*50}")
-        print(f"  {self.model_type.replace('_', ' ').title()} — Evaluation")
+        print(f"  {self.model_type.replace('_', ' ').title()} - Evaluation")
         print(f"{'='*50}")
         for k, v in metrics.items():
             print(f"  {k:<30} {v}")
@@ -160,7 +160,7 @@ class FailurePredictor:
         self._check_trained()
         os.makedirs(os.path.dirname(path), exist_ok=True)
         joblib.dump(self._pipeline, path)
-        print(f"Model saved → {path}")
+        print(f"Model saved -> {path}")
 
     @classmethod
     def load(cls, path: str) -> "FailurePredictor":
@@ -172,7 +172,7 @@ class FailurePredictor:
         instance.model_type = "loaded"
         return instance
 
-    # ── Private helpers ────────────────────────────────────────────────────
+    # --- Private helpers ---
 
     def _check_trained(self) -> None:
         if not self._is_trained:
