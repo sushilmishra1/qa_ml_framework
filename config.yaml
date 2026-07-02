@@ -22,7 +22,8 @@ ci_gate:
 anomaly:
   contamination: 0.05       # expected fraction of anomalies (Isolation Forest)
   zscore_threshold: 3.0     # Z-score cutoff for simple threshold alerts
-  baseline_window: 50       # number of recent samples for rolling baseline
+  baseline_window: 50       # number of recent samples for rolling baseline (per-row z-scores)
+  baseline_fraction: 0.3    # fraction of earliest data used to fit the detector (avoids scoring leakage)
 
 reports:
   output_dir: reports

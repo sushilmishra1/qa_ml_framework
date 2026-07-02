@@ -87,7 +87,7 @@ def run_gate(
 
     # Write JSON report
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, "w") as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2)
 
     # Print CI-friendly summary
@@ -115,6 +115,11 @@ def run_gate(
 
 
 def main():
+    # Console output uses unicode checkmarks; Windows terminals default to
+    # cp1252, which raises UnicodeEncodeError on those characters mid-run.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+
     parser = argparse.ArgumentParser(
         description="QA ML CI Gate — blocks PRs if predicted failure risk is too high"
     )

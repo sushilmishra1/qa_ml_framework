@@ -81,11 +81,20 @@ def build_perf_feature_matrix(
     return feat_df
 
 
+_ZSCORE_STD_EPSILON = 1e-9
+
+
 def _zscore(value: float, baseline: pd.Series) -> float:
-    """Z-score of value relative to a baseline series."""
+    """Z-score of value relative to a baseline series.
+
+    A near-constant baseline can produce a std that floating-point
+    arithmetic rounds to a tiny nonzero value (e.g. ~1e-18) rather than
+    exactly 0, which would otherwise blow up (value - mean) / std to an
+    astronomic number. Treat anything below the epsilon as zero variance.
+    """
     std = baseline.std(ddof=0)
     mean = baseline.mean()
-    if std == 0 or pd.isna(std):
+    if pd.isna(std) or std < _ZSCORE_STD_EPSILON:
         return 0.0
     return (value - mean) / std
 

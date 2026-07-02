@@ -124,7 +124,14 @@ The `perf_anomaly` module analyses Locust/JMeter output for:
 - Throughput drops (rolling baseline comparison)
 - P95/P99 latency regressions
 
-Output: flagged time windows with anomaly scores, suitable for CI gate or Grafana alerting.
+Output: flagged time windows with anomaly scores, rendered in the "Performance Anomalies"
+section of `reports/prediction_report.html`, suitable for CI gate or Grafana alerting.
+
+**Fitting strategy**: the pipeline uses `fit_predict_baseline_split()`, which fits the
+Isolation Forest only on the earliest `anomaly.baseline_fraction` of the run (a trusted
+baseline period) and scores the rest against it. This avoids the leakage of the simpler
+`fit_predict()` convenience method, which fits and scores the same window — letting real
+anomalies calibrate the detector's own notion of "normal."
 
 ---
 

@@ -13,6 +13,7 @@ No real CI system or load testing tool required.
 import os
 import random
 import string
+import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 from xml.etree.ElementTree import Element, SubElement, tostring
@@ -242,6 +243,11 @@ def generate_locust_history(
 # ── Entry point ────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
+    # Console output below uses unicode arrows; Windows terminals default to
+    # cp1252, which raises UnicodeEncodeError on those characters mid-run.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+
     print("Generating synthetic QA data...\n")
     generate_junit_history()
     generate_locust_history()

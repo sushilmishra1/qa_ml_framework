@@ -115,7 +115,10 @@ def run_full_pipeline(config_path: str = "config.yaml", ci_mode: bool = False):
             contamination=config["anomaly"]["contamination"],
             zscore_threshold=config["anomaly"]["zscore_threshold"],
         )
-        anomaly_results = detector.fit_predict(perf_features)
+        anomaly_results = detector.fit_predict_baseline_split(
+            perf_features,
+            baseline_fraction=config["anomaly"].get("baseline_fraction", 0.3),
+        )
         summary = detector.summary(anomaly_results)
         detector.save(os.path.join(models_dir, "anomaly_detector.pkl"))
     else:
@@ -153,6 +156,11 @@ def run_full_pipeline(config_path: str = "config.yaml", ci_mode: bool = False):
 
 
 if __name__ == "__main__":
+    # Console output uses unicode arrows/checkmarks; Windows terminals default
+    # to cp1252, which raises UnicodeEncodeError on those characters mid-run.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+
     parser = argparse.ArgumentParser(description="QA ML Framework — Pipeline Runner")
     parser.add_argument("--config", default="config.yaml")
     parser.add_argument("--ci-mode", action="store_true",

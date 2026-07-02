@@ -28,6 +28,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 
 from src.features.perf_features import PERF_FEATURE_COLUMNS
+from src.perf_anomaly.baseline import split_baseline_period
 
 
 class PerformanceAnomalyDetector:
@@ -117,8 +118,44 @@ class PerformanceAnomalyDetector:
 
         Note: In production, fit on baseline data and predict on new runs.
         fit_predict is useful for exploratory analysis.
+        Use fit_predict_baseline_split() to avoid training on the same
+        windows being scored.
         """
         return self.fit(feature_df).predict(feature_df)
+
+    def fit_predict_baseline_split(
+        self,
+        feature_df: pd.DataFrame,
+        timestamp_col: str = "timestamp",
+        baseline_fraction: float = 0.3,
+    ) -> pd.DataFrame:
+        """Fit on an early chronological slice (trusted baseline) and score
+        the full set against it.
+
+        This is the production-recommended entry point: fit_predict() fits
+        and scores the same window, which lets injected/real anomalies
+        calibrate the model's own notion of "normal". Here the model only
+        ever learns from the earliest `baseline_fraction` of the data, so
+        later anomalies can't leak into the boundary that's used to catch
+        them.
+
+        Args:
+            feature_df:        Feature matrix from build_perf_feature_matrix().
+            timestamp_col:      Column used to order chronologically.
+            baseline_fraction:  Fraction of the earliest rows used as baseline.
+
+        Returns:
+            Same output as predict(), scored for the full feature_df.
+        """
+        baseline_df, _ = split_baseline_period(
+            feature_df, baseline_fraction=baseline_fraction, timestamp_col=timestamp_col
+        )
+        if len(baseline_df) < 5:
+            raise ValueError(
+                f"Baseline slice too small ({len(baseline_df)} rows) to fit reliably. "
+                f"Increase baseline_fraction or provide more history."
+            )
+        return self.fit(baseline_df).predict(feature_df)
 
     def save(self, path: str) -> None:
         """Persist fitted detector to disk."""
