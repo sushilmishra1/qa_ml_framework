@@ -1,4 +1,4 @@
-name: QA ML Framework CI
+name: faultsignal CI
 
 on:
   push:
@@ -119,7 +119,7 @@ jobs:
               return;
             }
             const status = gateResult.gate_passed ? 'PASSED' : 'FAILED';
-            const body = `## QA ML Gate - ${status}
+            const body = `## faultsignal Gate - ${status}
 
             | Metric | Value |
             |--------|-------|

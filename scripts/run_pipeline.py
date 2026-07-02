@@ -37,10 +37,10 @@ def load_config(path: str = "config.yaml") -> dict:
 
 
 def run_full_pipeline(config_path: str = "config.yaml", ci_mode: bool = False):
-    """Run the complete QA ML pipeline."""
+    """Run the complete faultsignal pipeline."""
     config = load_config(config_path)
     print("\n" + "="*60)
-    print("  QA ML Framework - Full Pipeline")
+    print("  faultsignal - Full Pipeline")
     print("="*60)
 
     # --- Step 1: Ingest test history ---
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
 
-    parser = argparse.ArgumentParser(description="QA ML Framework - Pipeline Runner")
+    parser = argparse.ArgumentParser(description="faultsignal - Pipeline Runner")
     parser.add_argument("--config", default="config.yaml")
     parser.add_argument("--ci-mode", action="store_true",
                         help="Exit with gate exit code (for CI integration)")

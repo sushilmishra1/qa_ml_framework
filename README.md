@@ -1,7 +1,7 @@
-# qa-ml-framework
+# faultsignal
 
-> **ML-powered QA intelligence** - test failure prediction, risk-based prioritisation, and performance anomaly detection.  
-> Pure Python · No AI/LLM dependencies · No cloud services required · GitHub Actions CI gate included.
+> Test failure prediction, flaky test detection, risk-based prioritisation, and performance anomaly detection.
+> Pure Python, no AI/LLM dependencies, no cloud services required, GitHub Actions CI gate included.
 
 ---
 
@@ -20,7 +20,7 @@
 ## Project structure
 
 ```
-qa-ml-framework/
+faultsignal/
 ├── data/
 │   ├── raw/                    # JUnit XML reports, Locust CSV exports
 │   └── processed/              # Engineered feature DataFrames (parquet)
@@ -67,8 +67,8 @@ qa-ml-framework/
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/YOUR_USERNAME/qa-ml-framework.git
-cd qa-ml-framework
+git clone https://github.com/sushilmishra1/qa_ml_framework.git faultsignal
+cd faultsignal
 pip install -r requirements.txt
 
 # 2. Generate synthetic sample data

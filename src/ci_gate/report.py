@@ -22,7 +22,7 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>QA ML Framework - Report</title>
+<title>faultsignal - Report</title>
 <style>
   body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
          margin: 0; padding: 24px; background: #f8f8f6; color: #1a1a18; }}
@@ -54,7 +54,7 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
 </style>
 </head>
 <body>
-<h1>QA ML Framework - Prediction Report</h1>
+<h1>faultsignal - Prediction Report</h1>
 <p class="meta">Generated: {timestamp} &nbsp;|&nbsp; Commit: {commit_sha}</p>
 
 {gate_block}

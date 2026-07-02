@@ -1,4 +1,4 @@
-# QA ML Framework - Architecture
+# faultsignal - Architecture
 
 A visual walkthrough of how raw test/perf data becomes a merge-blocking risk score. Diagrams render natively on GitHub (Mermaid).
 

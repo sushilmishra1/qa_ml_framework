@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="qa-ml-framework",
+    name="faultsignal",
     version="1.0.0",
-    description="ML-powered QA intelligence: test failure prediction and performance anomaly detection",
+    description="ML-based test failure prediction, flaky test detection, and performance anomaly detection",
     author="Your Name",
     packages=find_packages(include=["src", "src.*"]),
     python_requires=">=3.10",
