@@ -67,7 +67,7 @@ ml-anomaly-detection-framework/
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/sushilmishra1/qa_ml_framework.git ml-anomaly-detection-framework
+git clone https://github.com/sushilmishra1/ml-anomaly-detection-framework.git
 cd ml-anomaly-detection-framework
 pip install -r requirements.txt
 
