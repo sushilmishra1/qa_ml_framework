@@ -92,7 +92,7 @@ def run_gate(
 
     # Print CI-friendly summary
     print(f"\n{'='*55}")
-    print(f"  faultsignal Gate Result")
+    print(f"  ml-anomaly-detection-framework Gate Result")
     print(f"{'='*55}")
     print(f"  Mean risk score (top-{top_n_tests} tests): {mean_top_risk:.4f}")
     print(f"  Threshold:                          {risk_threshold:.4f}")
@@ -120,7 +120,7 @@ def main():
         sys.stdout.reconfigure(encoding="utf-8")
 
     parser = argparse.ArgumentParser(
-        description="faultsignal CI gate - blocks PRs if predicted failure risk is too high"
+        description="ml-anomaly-detection-framework CI gate - blocks PRs if predicted failure risk is too high"
     )
     parser.add_argument(
         "predictions",

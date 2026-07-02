@@ -1,4 +1,4 @@
-name: faultsignal CI
+name: ml-anomaly-detection-framework CI
 
 on:
   push:
@@ -119,7 +119,7 @@ jobs:
               return;
             }
             const status = gateResult.gate_passed ? 'PASSED' : 'FAILED';
-            const body = `## faultsignal Gate - ${status}
+            const body = `## ml-anomaly-detection-framework Gate - ${status}
 
             | Metric | Value |
             |--------|-------|

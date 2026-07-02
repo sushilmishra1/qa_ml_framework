@@ -1,4 +1,4 @@
-# faultsignal
+# ml-anomaly-detection-framework
 
 > Test failure prediction, flaky test detection, risk-based prioritisation, and performance anomaly detection.
 > Pure Python, no AI/LLM dependencies, no cloud services required, GitHub Actions CI gate included.
@@ -20,7 +20,7 @@
 ## Project structure
 
 ```
-faultsignal/
+ml-anomaly-detection-framework/
 ├── data/
 │   ├── raw/                    # JUnit XML reports, Locust CSV exports
 │   └── processed/              # Engineered feature DataFrames (parquet)
@@ -67,8 +67,8 @@ faultsignal/
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/sushilmishra1/qa_ml_framework.git faultsignal
-cd faultsignal
+git clone https://github.com/sushilmishra1/qa_ml_framework.git ml-anomaly-detection-framework
+cd ml-anomaly-detection-framework
 pip install -r requirements.txt
 
 # 2. Generate synthetic sample data

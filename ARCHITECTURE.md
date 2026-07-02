@@ -1,4 +1,4 @@
-# faultsignal - Architecture
+# ml-anomaly-detection-framework - Architecture
 
 A visual walkthrough of how raw test/perf data becomes a merge-blocking risk score. Diagrams render natively on GitHub (Mermaid).
 

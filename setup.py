@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="faultsignal",
+    name="ml-anomaly-detection-framework",
     version="1.0.0",
     description="ML-based test failure prediction, flaky test detection, and performance anomaly detection",
     author="Your Name",
